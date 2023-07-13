@@ -1,5 +1,42 @@
 ![banner_resmi](https://github.com/Birsenn/FLO_CRM_ANALYTICS/blob/main/banner.png)
 
+## Customer Segmentation with RFM
+FLO, an online shoe store, wants to segment its customers and determine marketing strategies according to these segments. To this end, the behaviors of the customers will be defined and groups will be formed according to the clusters in these behaviors.
+
+## Process Steps
+* Preparation of data set <br/>
+* Calculating RFM Metrics <br/>
+* Calculation of RF Score <br/>
+* Identifying customers belonging to certain segments <br/>
+
+## CLTV Prediction with BG-NBD and Gamma-Gamma Models
+FLO wants to set a roadmap for sales and marketing activities. In order for the company to make a medium-long-term plan, it is necessary to estimate the potential value that existing customers will provide to the company in the future.
+
+## Process Steps
+* Preparation of data set <br/>
+* Creation of CLTV Data Structure <br/>
+* Establishment of BG/NBD, Gamma-Gamma Models and Calculation of CLTV <br/>
+* Creating Segments by CLTV Value <br/>
+
+-------------------------------------------------------------------------------- <br/>
+
+**Short Descriptions of the Given Features:**
+* **master_id:** Unique client number <br/>
+* **order_channel:** Which channel of the shopping platform is used (Android, iOS, Desktop, Mobile) <br/>
+* **last_order_channel:** The channel where the last purchase was made <br/>
+* **first_order_date:** Customer's first purchase date <br/>
+* **last_order_date:** Customer's last purchase date <br/>
+* **last_order_date_online:** Customer's last online shopping date <br/>
+* **last_order_date_offline:** Customer's last offline shopping date <br/>
+* **order_num_total_ever_online:** Total number of purchases made by the customer on the online platform <br/>
+* **order_num_total_ever_offline:** Total number of purchases made by the customer on the offline platform <br/>
+* **customer_value_total_ever_offline:** Total paid by the customer for offline purchases <br/>
+* **customer_value_total_ever_online:** Total paid by the customer for online purchases <br/>
+* **interested_in_categories_12:** List of categories the customer has shopped in the last 12 months <br/>
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------<br/>
+
 ## RFM ile Müşteri Segmentasyonu
 Online ayakkabı mağazası olan FLO, müşterilerini segmentlere ayırıp bu segmentlere göre pazarlama stratejileri belirlemek istiyor. Buna yönelik olarak müşterilerin davranışları tanımlanacak ve bu davranışlardaki öbeklenmelere göre gruplar oluşturulacak.
 
