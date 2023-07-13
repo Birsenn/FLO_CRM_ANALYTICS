@@ -9,7 +9,7 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
 df.head()
 
-#Veri setine genel bakış
+#First look at data
 
 df.head(10)
 df.columns
@@ -18,34 +18,34 @@ df.describe().T
 df.isnull().sum()
 df.dtypes
 
-#Omnichannel müşteriler hem online'dan hemde offline platformlardan alışveriş yapmaktadır.
-#Her bir müşterinin toplam alışveriş sayısı ve harcaması için yeni değişkenler oluşturuyoruz.
+#Omnichannel customers shop both online and offline platforms.
+#We create new variables for the total number of purchases and spending of each customer.
 
 df["order_num_total"] = df["order_num_total_ever_online"] + df["order_num_total_ever_offline"]
 df["customer_value_total"] = df["customer_value_total_ever_online"] + df["customer_value_total_ever_offline"]
 
 df.head()
 
-#Değişken tiplerini inceleyerek, tarih ifade eden değişkenlerin tipini date'e çeviriyoruz.
+#By examining the variable types, we convert the type of variables that express date to date.
 df.dtypes
 df["first_order_date"] = df["first_order_date"].apply(pd.to_datetime)
 df["last_order_date"] = df["last_order_date"].apply(pd.to_datetime)
 df["last_order_date_online"] = df["last_order_date_online"].apply(pd.to_datetime)
 df["last_order_date_offline"] = df["last_order_date_offline"].apply(pd.to_datetime)
 
-#Alışveriş kanallarındaki müşteri sayısının, toplam alınan ürün sayısının ve toplam harcamaların dağılımına bakalım.
+#Let's look at the distribution of the number of customers in the shopping channels, the total number of products purchased, and the total expenditures.
 analysing = df.groupby("order_channel").agg({"master_id": "count",
                                  "order_num_total": "sum",
                                  "customer_value_total": "sum"})
 
 
-#En fazla kazancı getiren ilk 10 müşteriyi sıralayalım.
+#Let's list the top 10 customers with the most revenue.
 df.sort_values(by="customer_value_total", ascending=False).head(10)
 
-#En fazla siparişi veren ilk 10 müşteriyi sıralayalım.
+#Let's list the top 10 customers with the most orders.
 df.sort_values(by="order_num_total", ascending=False).head(10)
 
-#Veri ön hazırlık sürecini fonksiyonlaştıralım.
+#Let's functionalize the data preparation process.
 
 def dataset_preparing(dataframe):
     dataframe.dropna(inplace=True)
@@ -59,16 +59,16 @@ def dataset_preparing(dataframe):
 
     return dataframe
 
-#deneme
+#using function for data preparation
 df = df_.copy()
 df.head()
 dataset_preparing(df)
 
-#RFM Metriklerinin Hesaplanması
-#Adım 1: Recency, Frequency ve Monetary tanımlarını yapacağız.
-#Adım 2: Hesapladığınız metrikleri rfm isimli bir değişkene atayacağız.
+#Calculating RFM Metrics
+#Step 1: We will define Recency, Frequency and Monetary.
+#Step 2: We will assign the metrics you calculated to a variable named rfm.
 
-df["last_order_date"].max() #sipariş verilen son tarihi bulup analiz tarihine karar vereceğiz.
+df["last_order_date"].max() #we will find the last date ordered and decide on the analysis date.
 
 today_date = dt.datetime(2021, 6, 2)
 
@@ -79,20 +79,20 @@ rfm = df.groupby("master_id").agg({"last_order_date": lambda x: (today_date - x.
 rfm.columns = ["recency", "frequency", "monetary"]
 rfm.head()
 
-#RF Skorunun Hesaplanması
-#Adım 1: Recency, Frequency ve Monetary metriklerini qcut yardımı ile 1-5 arasında skorlara çevireceğiz.
+#Calculation of RF Score
+#Step 1: We will convert the Recency, Frequency and Monetary metrics to scores between 1-5 with the help of qcut.
 
 rfm["recency_score"] = pd.qcut(rfm["recency"], 5, labels = [5, 4, 3, 2, 1])
 rfm["frequency_score"] = pd.qcut(rfm["frequency"].rank(method="first"), 5, labels=[1, 2, 3, 4, 5])
 rfm["monetary_score"] = pd.qcut(rfm["monetary"], 5, labels=[1, 2, 3, 4, 5])
 
-#recency_score ve frequency_score’u tek bir değişken olarak ifade edeceğiz ve RF_SCORE olarak kaydedeceğiz.
+#We will express recency_score and frequency_score as a single variable and save it as RF_SCORE.
 rfm["RF_SCORE"] = (rfm["recency_score"].astype(str) + rfm["frequency_score"].astype(str))
 rfm.shape
 
-#RF Skorunun Segment Olarak Tanımlanması
-#Adım 1: Oluşturulan RF skorları için segment tanımlamaları yapacağız.
-#Adım 2: Aşağıdaki seg_map yardımı ile skorları segmentlere çevireceğiz.
+#Definition of RF Score as Segments
+#Step 1: We will make segment definitions for the generated RF scores.
+#Step 2: We will convert the scores into segments with the help of the seg_map below.
 
 seg_map = {
     r'[1-2][1-2]': 'hibernating',
@@ -111,19 +111,19 @@ rfm['segment'] = rfm['RF_SCORE'].replace(seg_map, regex=True)
 rfm.head()
 rfm.shape
 
-#Aksiyon Zamanı !
+#Action
 
-#Adım 1: Segmentlerin recency, frequnecy ve monetary ortalamalarını inceleyelim.
+#Step 1: Let's examine the recency, frequency and monetary averages of the segments.
 
 rfm[["segment", "recency", "frequency", "monetary"]].groupby("segment").agg(["mean", "count"])
 
-#Adım 2: RFM analizi yardımıyla aşağıda verilen 2 case için ilgili profildeki müşterileri bulalım ve müşteri id'lerini csv olarak kaydedelim.
-#Bu csv dosyasını ilgili birimlere sunarak, bu müşterilerle ilgili çalışma yapılmasını sağlamış olacağız.
+#Step 2: With the help of RFM analysis, let's find the customers in the relevant profile for the 2 cases given below and save the customer IDs as csv.
+#By presenting this csv file to the relevant units, we will ensure that work is done on these customers.
 
-#a. FLO bünyesine yeni bir kadın ayakkabı markası dahil ediyor. Dahil ettiği markanın ürün fiyatları genel müşteri tercihlerinin üstünde.
-#Bu nedenle markanın tanıtımı ve ürün satışları için ilgilenecek profildeki müşterilerle özel olarak iletişime geçmek isteniliyor.
-#Sadık müşterilerinden(champions, loyal_customers) ve kadın kategorisinden alışveriş yapan kişiler özel olarak iletişim kurulacak müşteriler.
-#Bu müşterilerin id numaralarını csv dosyasına kaydediniz.
+#a. FLO includes a new women's shoe brand. The product prices of the brand it includes are above the general customer preferences.
+#For this reason, it is desired to contact the customers in the profile that will be interested in the promotion of the brand and product sales.
+#Those who shop from loyal customers (champions, loyal_customers) and women are the customers to be contacted privately.
+#Save the id numbers of these customers to the csv file.
 
 rfm = rfm.reset_index()
 rfm = rfm.merge(df[["master_id", "interested_in_categories_12"]], how = 'left')
@@ -136,25 +136,13 @@ deneme.head()
 
 deneme.to_csv("rfm_a.csv")
 
-#b. Erkek ve Çocuk ürünlerinde %40'a yakın indirim planlanmaktadır. Bu indirimle ilgili kategorilerle ilgilenen geçmişte
-#iyi müşteri olan ama uzun süredir alışveriş yapmayan kaybedilmemesi gereken müşteriler, uykuda olanlar ve yeni gelen müşteriler
-#özel olarak hedef alınmak isteniyor. Uygun profildeki müşterilerin id'lerini csv dosyasına kaydediniz.
+#b.Nearly 40% discount is planned for Men's and Children's products. Previously interested in categories related to this discount
+#good customers but not to be lost customers who have not shopped for a long time, those who are asleep and new customers
+#want to be specifically targeted. Save the ids of the customers in the appropriate profile to the csv file.
 
-deneme2 = rfm.loc[((rfm["segment"] == "at_Risk") | (rfm["segment"] == "cant_loose") | (rfm["segment"] == "hibernating") | (rfm["segment"] == "new_customers")) & (rfm["interested_in_categories_12"].str.contains("ERKEK", "COCUK")), ["master_id"]]
-deneme2.head()
-deneme2.shape
+target_segments_customer_ids = rfm[rfm["segment"].isin(["cant_loose","hibernating","new_customers"])]["customer_id"]
+cust_ids = df[(df["master_id"].isin(target_segments_customer_ids)) & ((df["interested_in_categories_12"].str.contains("ERKEK"))|(df["interested_in_categories_12"].str.contains("COCUK")))]["master_id"]
+cust_ids.to_csv("indirim_hedef_müşteri_ids.csv", index=False)
 
-deneme2.to_csv("rfm_b.csv")
-
-#Böylelikle müşterileri segmentlere ayırmış olduk. Bu segmentleri belli kırılımlarda inceleyerek, hangi noktalara odaklanılması gerektiği
-#yorumunu yapabiliriz ve hedef kitle müşteriye ulaşabiliriz. Gerekli segmentler için kampanyalar düzenleyebiliriz, gerekli segmentleri yeniden kazanabiliriz.
-
-
-
-
-
-
-
-
-
-
+#In this way, we have divided the customers into segments. By examining these segments in certain breakdowns, it is necessary to focus on which points 
+#we can make the interpretation and reach the target audience customer. We can organize campaigns for the necessary segments, we can regain the necessary segments.
