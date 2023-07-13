@@ -1,11 +1,12 @@
-df_ = pd.read_csv("/Users/birsenbayat/Desktop/miuul/PythonProgrammingForDataScience/CRM_Analitigi/FLOMusteriSegmentasyonu/flo_data_20k.csv")
-df = df_.copy()
-
 import datetime as dt
 import pandas as pd
 pd.set_option('display.max_columns', None)
 # pd.set_option('display.max_rows', None)
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
+
+df_ = pd.read_csv("/Users/birsenbayat/Desktop/miuul/PythonProgrammingForDataScience/CRM_Analitigi/FLOMusteriSegmentasyonu/flo_data_20k.csv")
+df = df_.copy()
+
 
 df.head()
 
