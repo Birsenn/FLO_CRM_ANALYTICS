@@ -35,7 +35,7 @@ FLO wants to set a roadmap for sales and marketing activities. In order for the 
 * **interested_in_categories_12:** List of categories the customer has shopped in the last 12 months <br/>
 
 
--------------------------------------------------------------------------------------------------------------------------------------------------------<br/>
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------<br/>
 
 ## RFM ile Müşteri Segmentasyonu
 Online ayakkabı mağazası olan FLO, müşterilerini segmentlere ayırıp bu segmentlere göre pazarlama stratejileri belirlemek istiyor. Buna yönelik olarak müşterilerin davranışları tanımlanacak ve bu davranışlardaki öbeklenmelere göre gruplar oluşturulacak.
